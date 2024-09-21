@@ -1,5 +1,3 @@
 #!/bin/bash
-#since, file betty doesn't exist we first create it.
-touch /tmp/betty
-#finally, the command to move file betty to my_first_directory.
-mv /tmp/betty /tmp/my_first_directory/
+
+mv /tmp/betty /tmp/my_first_directory/||echo"file betty doesn't exist."
