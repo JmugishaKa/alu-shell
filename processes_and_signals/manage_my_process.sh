@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# Manages the manage_my_process
-file=/var/run/my_process.pid
+# creates my_process.sh inside /tmp
 
-if [ "$1" == "start" ]; then
-    ./manage_my_process &             # Start manage_my_process in the background
-    sudo bash -c "echo $! > $file"    # Store the PID of manage_my_process
-    echo "manage_my_process started"
-fi
+output_file="/tmp/my_process"
+
+# Run indefinitely
+while true; do
+  echo "I am alive!" >> "$output_file"
+  sleep 2
+done
 
