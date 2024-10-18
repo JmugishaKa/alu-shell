@@ -1,23 +1,56 @@
-#!/usr/bin/env bash
-#manages the manage_process
-file=/var/run/my_process.pid
-if [ "$1" == "start" ];
-then
-    ./manage_my_process &
-    sudo bash -c "echo $! > $file"
-    echo "manage_my_process started"
-elif [ "$1" == "stop" ];
-then
-    pkill -f ./manage_my_process
-    sudo rm $file
-    echo "manage_my_process stopped"
-elif [ "$1" == "restart" ];
-then
-    pkill -f ./manage_my_process
-    sudo rm $file
-    ./manage_my_process &
-    sudo bash -c "echo $! > $file"
-    echo "manage_my_process restarted"
-else
+#!/bin/bash
+
+# File to store the PID
+pid_file="/var/run/my_process.pid"
+process_script="./manage_my_process.sh"
+
+# Function to start the process
+start_process() {
+  if [ -f "$pid_file" ]; then
+    echo "manage_my_process is already running!"
+    exit 1
+  fi
+
+  # Start the process in the background
+  $process_script &
+  echo $! > "$pid_file"
+  echo "manage_my_process started"
+}
+
+# Function to stop the process
+stop_process() {
+  if [ ! -f "$pid_file" ]; then
+    echo "manage_my_process is not running!"
+    exit 1
+  fi
+
+  # Stop the process
+  kill "$(cat "$pid_file")"
+  rm -f "$pid_file"
+  echo "manage_my_process stopped"
+}
+
+# Function to restart the process
+restart_process() {
+  stop_process
+  start_process
+  echo "manage_my_process restarted"
+}
+
+# Handle input arguments
+case "$1" in
+  start)
+    start_process
+    ;;
+  stop)
+    stop_process
+    ;;
+  restart)
+    restart_process
+    ;;
+  *)
     echo "Usage: manage_my_process {start|stop|restart}"
-fi
+    exit 1
+    ;;
+esac
+
